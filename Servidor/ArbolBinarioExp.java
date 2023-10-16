@@ -7,8 +7,8 @@ public class ArbolBinarioExp {
     public  ArbolBinarioExp(){
         raiz = null;
     }
-    public  ArbolBinarioExp(String cadena){
-        raiz = creaArbolBE(cadena);
+    public  ArbolBinarioExp(String expresion){
+        raiz = creaArbolBE(expresion);
     }
     public void reinciarArbol(){
         raiz = null;
@@ -25,12 +25,12 @@ public class ArbolBinarioExp {
         return raiz == null;
     }
     private String preorden(NodoArbol subArbol, String c){
-        String cadena;
-        cadena = "";
+        String expresion;
+        expresion = "";
         if(subArbol != null){
-            cadena = c + subArbol.dato.toString()+"\n"+preorden(subArbol.izquierdo, c)+preorden(subArbol.derecho, c);
+            expresion = c + subArbol.dato.toString()+"\n"+preorden(subArbol.izquierdo, c)+preorden(subArbol.derecho, c);
         }
-        return cadena;
+        return expresion;
     }
     private String inorden(NodoArbol subArbol, String c){
         String cadena;
@@ -164,35 +164,35 @@ public class ArbolBinarioExp {
         op = PilaExpresiones.quitar();
         return op;
     }
-    public double EvaluaExpresion(){
+    public double EvaluaExpresion(String expresion) {
+        raiz = creaArbolBE(expresion);
         return evalua(raiz);
     }
-    private double evalua(NodoArbol subArbol){
-        double acum = 0;
-        if (!esOperador(subArbol.dato.toString().charAt(0))){
-            return Double.parseDouble(subArbol.dato.toString());
-        } else{
-            switch (subArbol.dato.toString().charAt(0)){
-                case'y':
-                    acum = acum + Math.pow(evalua(subArbol.izquierdo), evalua(subArbol.derecho));
-                    break;
-                case'*':
-                    acum = acum + evalua(subArbol.izquierdo) * evalua(subArbol.derecho);
-                    break;
-                case'/':
-                    acum = acum + evalua(subArbol.izquierdo) / evalua(subArbol.derecho);
-                    break;
-                case'+':
-                    acum = acum + evalua(subArbol.izquierdo) + evalua(subArbol.derecho);
-                    break;
-                case'-':
-                    acum = acum + evalua(subArbol.izquierdo) - evalua(subArbol.derecho);
-                    break;
 
+    private double evalua(NodoArbol subArbol) {
+        if (!esOperador(subArbol.dato.toString().charAt(0))) {
+            return Double.parseDouble(subArbol.dato.toString());
+        } else {
+            double acum = 0; // Initialize acum for each call to evalua
+            switch (subArbol.dato.toString().charAt(0)) {
+                case 'y':
+                    acum = Math.pow(evalua(subArbol.izquierdo), evalua(subArbol.derecho));
+                    break;
+                case '*':
+                    acum = evalua(subArbol.izquierdo) * evalua(subArbol.derecho);
+                    break;
+                case '/':
+                    acum = evalua(subArbol.izquierdo) / evalua(subArbol.derecho);
+                    break;
+                case '+':
+                    acum = evalua(subArbol.izquierdo) + evalua(subArbol.derecho);
+                    break;
+                case '-':
+                    acum = evalua(subArbol.izquierdo) - evalua(subArbol.derecho);
+                    break;
             }
             return acum;
         }
-
     }
 
 
