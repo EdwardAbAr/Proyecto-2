@@ -5,7 +5,6 @@ import java.awt.*;
 import java.net.*;
 import java.io.*;
 import java.awt.event.*;
-import Servidor.ArbolBinarioExp;
 
 public class Servidor {
     JFrame ventana_chat = null;
@@ -19,24 +18,23 @@ public class Servidor {
     Socket socket = null;
     BufferedReader lector = null;
     PrintWriter escritor = null;
-    ArbolBinarioExp arbolExp = new ArbolBinarioExp();
 
-    public Servidor() {
+    public Servidor(){
         hacerInterfaz();
     }
 
     public void hacerInterfaz() {
         ventana_chat = new JFrame("Servidor");
+        btn_enviar = new JButton("Enviar");
         txt_mensaje = new JTextField(4);
         area_chat = new JTextArea(10, 12);
         scroll = new JScrollPane(area_chat);
         contenedor_areachat = new JPanel();
-        contenedor_areachat.setLayout(new GridLayout(1, 1));
+        contenedor_areachat.setLayout(new GridLayout(1,1));
         contenedor_areachat.add(scroll);
         contenedor_btntxt = new JPanel();
-        contenedor_btntxt.setLayout(new GridLayout(1, 2));
+        contenedor_btntxt.setLayout(new GridLayout(1,2));
         contenedor_btntxt.add(txt_mensaje);
-        btn_enviar = new JButton("Enviar");
         contenedor_btntxt.add(btn_enviar);
         ventana_chat.setLayout(new BorderLayout());
         ventana_chat.add(contenedor_areachat, BorderLayout.NORTH);
@@ -50,36 +48,29 @@ public class Servidor {
             public void run() {
                 try {
                     servidor = new ServerSocket(1234);
-                    while (true) {
+                    while(true) {
                         socket = servidor.accept();
                         leer();
                         escribir();
                     }
-                } catch (Exception ex) {
+                }catch(Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
         principal.start();
     }
-
     public void leer() {
         Thread leer_hilo = new Thread(new Runnable() {
             public void run() {
                 try {
                     lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    while (true) {
-                        String expresion = lector.readLine();
-                        if (expresion == null) {
-                            // Connection closed, break the loop
-                            break;
-                        }
-                        double resultado = arbolExp.EvaluaExpresion(expresion);
-                        escritor.println(resultado);
-                        area_chat.append("Cliente: " + expresion + "\n");
-                        area_chat.append("Servidor: " + resultado + "\n");
+                    while(true) {
+                        String mensaje_recibido = lector.readLine();
+                        area_chat.append("Cliente: "+mensaje_recibido+"\n");
+
                     }
-                } catch (Exception ex) {
+                }catch(Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -99,15 +90,18 @@ public class Servidor {
                             txt_mensaje.setText("");
                         }
                     });
-                } catch (Exception ex) {
+                }catch(Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
         escribir_hilo.start();
+
+    }
+    public static void main(String[] args) {
+
+        new Servidor();
+
     }
 
-    public static void main(String[] args) {
-        new Servidor();
-    }
 }
