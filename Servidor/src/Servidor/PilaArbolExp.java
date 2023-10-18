@@ -8,10 +8,11 @@ public class PilaArbolExp {
     }
 
     public void insertar(NodoArbol elemento){
-        NodoPila nuevo;
-        nuevo = new NodoPila(elemento);
+        NodoPila nuevo = new NodoPila(elemento);
+        nuevo.siguiente = tope;
         tope = nuevo;
     }
+
     public boolean pilaVacia(){
         return tope == null;
     }

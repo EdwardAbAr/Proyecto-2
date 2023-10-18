@@ -67,10 +67,20 @@ public class Servidor {
                     lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     while(true) {
                         String mensaje_recibido = lector.readLine();
-                        area_chat.append("Cliente: "+mensaje_recibido+"\n");
+                        area_chat.append("Cliente: " + mensaje_recibido + "\n");
 
+                        try {
+                            ArbolBinarioExp arbol = new ArbolBinarioExp(mensaje_recibido);
+                            double resultado = arbol.EvaluaExpresion();
+                            area_chat.append("Resultado: " + resultado + "\n");
+                            escritor.println(resultado);
+                        } catch (Exception e) {
+                            // Proporciona un mensaje de error específico
+                            area_chat.append("Error al evaluar la expresión: " + e.getMessage() + "\n");
+                            escritor.println("Error al evaluar la expresión: " + e.getMessage());
+                        }
                     }
-                }catch(Exception ex) {
+                } catch(Exception ex) {
                     ex.printStackTrace();
                 }
             }
