@@ -1,5 +1,5 @@
 package Servidor;
-import Servidor.TesseractOCR;
+
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -81,14 +81,7 @@ public class Servidor {
                             String contenidoRegistro = new String(Files.readAllBytes(Paths.get("registro_operaciones.csv")));
                             escritor.println(contenidoRegistro);
                             continue;
-                        } else if (mensaje_recibido.equals("IMAGEN_ENVIADA")) {
-                            mensaje_recibido = convertImageToString(socketCliente);  // Convertimos la imagen a texto.
-                            if (mensaje_recibido.equals("Error")) {
-                                escritor.println("Error al convertir la imagen a texto.");
-                                continue;
-                            }
                         }
-
                         area_chat.append("Cliente: " + mensaje_recibido + "\n");
 
                         try {
@@ -109,27 +102,6 @@ public class Servidor {
             }
         });
         hiloCliente.start();
-    }
-
-
-    private String convertImageToString(Socket socket) {
-        try {
-            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-            byte[] imageBytes = (byte[]) inputStream.readObject();
-            Mat image = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
-
-            // Crear una instancia de TesseractOCR y convertir la imagen a texto
-            TesseractOCR tesseractOCR = new TesseractOCR();
-            String extractedText = tesseractOCR.convertImageToText(image);
-
-            // Devolvemos el texto extraído
-            return extractedText;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error al recibir/guardar la imagen: " + e.getMessage());
-            return "Error";
-        }
     }
 
     private static void saveReceivedImage(Socket socket) {
