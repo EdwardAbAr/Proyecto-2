@@ -2,7 +2,6 @@ package Cliente;
 
 import Cliente.OpenCV;
 import org.opencv.core.Core;
-
 import javax.swing.*;
 import java.awt.*;
 import java.net.*;
@@ -13,6 +12,7 @@ public class Cliente {
     JFrame ventana_chat = null;
     JButton btn_enviar = null;
     JButton btn_camara = null;
+    JButton btn_registro = null;
     JTextField txt_mensaje = null;
     JTextArea area_chat = null;
     JPanel contenedor_areachat = null;
@@ -28,6 +28,7 @@ public class Cliente {
         ventana_chat = new JFrame("Cliente");
         btn_enviar = new JButton("Enviar");
         btn_camara = new JButton("Camara");
+        btn_registro = new JButton("Registro");
         txt_mensaje = new JTextField(4);
         area_chat = new JTextArea(10, 12);
         scroll = new JScrollPane(area_chat);
@@ -39,10 +40,11 @@ public class Cliente {
         contenedor_btntxt.add(txt_mensaje);
         contenedor_btntxt.add(btn_enviar);
         contenedor_btntxt.add(btn_camara);
+        contenedor_btntxt.add(btn_registro);
         ventana_chat.setLayout(new BorderLayout());
         ventana_chat.add(contenedor_areachat, BorderLayout.NORTH);
         ventana_chat.add(contenedor_btntxt, BorderLayout.SOUTH);
-        ventana_chat.setSize(300, 220);
+        ventana_chat.setSize(400, 220);
         ventana_chat.setVisible(true);
         ventana_chat.setResizable(false);
         ventana_chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,6 +52,17 @@ public class Cliente {
         btn_camara.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 abrirCamara();
+            }
+        });
+        btn_registro.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    Registro registro = new Registro(socket, lector, escritor);
+                    registro.mostrarRegistro();
+                    registro.setVisible(true);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -82,6 +95,7 @@ public class Cliente {
         });
     }
 
+
     public void leer() {
         Thread leer_hilo = new Thread(new Runnable() {
             public void run() {
@@ -89,8 +103,11 @@ public class Cliente {
                     lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     while(true) {
                         String mensaje_recibido = lector.readLine();
-                        area_chat.append("Servidor: "+mensaje_recibido+"\n");
-
+                        if(mensaje_recibido.startsWith("\"")) { // Asumimos que el registro comienza con una comilla doble
+                            area_chat.append("Registro:\n" + mensaje_recibido + "\n\n");
+                        } else {
+                            area_chat.append("Resultado: "+mensaje_recibido+"\n");
+                        }
                     }
                 }catch(Exception ex) {
                     ex.printStackTrace();
@@ -99,6 +116,7 @@ public class Cliente {
         });
         leer_hilo.start();
     }
+
 
     public void escribir() {
         Thread escribir_hilo = new Thread(new Runnable() {
