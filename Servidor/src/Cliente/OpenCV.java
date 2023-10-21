@@ -177,11 +177,7 @@ public class OpenCV extends JFrame {
             Imgcodecs.imencode(".jpg", image, buf);
             byte[] byteArray = buf.toArray();
 
-            outputStream.writeObject(byteArray); // Enviando la imagen en sí
-
-            // Ahora, vamos a enviar la cadena "IMAGEN_ENVIADA"
-            outputStream.writeObject("IMAGEN_ENVIADA");
-
+            outputStream.writeObject(byteArray);
             outputStream.close();
             socket.close();
         } catch (Exception e) {
