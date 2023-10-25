@@ -241,6 +241,9 @@ public class ArbolBinarioExp {
      */
     private double evalua(NodoArbol subArbol){
         double acum = 0;
+        if (subArbol == null) {
+            throw new IllegalArgumentException("Subárbol no puede ser nulo");
+        }
         String operador = subArbol.dato.toString();
         if (!esOperador(operador)) {
             return Double.parseDouble(operador);

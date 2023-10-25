@@ -25,11 +25,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Tess4J-3.4.8-src/Tess4J/dist/tess4j-3.4.8.jar!/" />
+          <root url="jar://C:/Tess4J-3.4.8-src/Tess4J/dist/tess4j-3.4.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <NATIVE>
-          <root url="file://$MODULE_DIR$/../Tess4J-3.4.8-src/Tess4J/lib/win32-x86-64" />
+          <root url="file://C:/Tess4J-3.4.8-src/Tess4J/lib/win32-x86-64" />
         </NATIVE>
         <SOURCES />
       </library>

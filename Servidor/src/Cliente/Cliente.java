@@ -66,15 +66,15 @@ public class Cliente {
             }
         });
 
-        Thread principal = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    socket = new Socket("127.0.0.1", 1234);
-                    leer();
-                    escribir();
-                }catch(Exception ex) {
-                    ex.printStackTrace();
-                }
+        Thread principal = new Thread(() -> {
+            try {
+                socket = new Socket("127.0.0.1", 1234);
+                lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                escritor = new PrintWriter(socket.getOutputStream(), true);
+                leer();
+                escribir();
+            } catch(Exception ex) {
+                ex.printStackTrace();
             }
         });
         principal.start();

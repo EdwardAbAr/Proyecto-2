@@ -12,9 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -155,59 +153,32 @@ public class OpenCV extends JFrame {
                 }
 
                 // Guarda la nueva imagen
-                Imgcodecs.imwrite("images/" + newName + ".jpg", image);
-                deleteOldestImage();
-                sendImageToServer(image);
 
+                enviarImagenAServidor(image);
                 clicked = false;
             }
         }
     }
 
-    /**
-     * Envía una imagen al servidor a través de un socket.
-     * @param image La imagen a enviar.
-     */
-    private void sendImageToServer(Mat image) {
+    private void enviarImagenAServidor(Mat imagen) {
         try {
-            Socket socket = new Socket("localhost", 1234);
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            Socket socket = new Socket("localhost", 1234); // Conexión al servidor
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 
             MatOfByte buf = new MatOfByte();
-            Imgcodecs.imencode(".jpg", image, buf);
-            byte[] byteArray = buf.toArray();
+            Imgcodecs.imencode(".jpg", imagen, buf);
+            byte[] imageData = buf.toArray();
 
-            outputStream.writeObject(byteArray);
-            outputStream.close();
+            dos.writeInt(imageData.length);
+            dos.write(imageData);
+
+            dos.close();
             socket.close();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error enviando la imagen al servidor: " + e.getMessage());
         }
     }
 
-    /**
-     * Elimina la imagen más antigua del directorio de imágenes.
-     */
-    private void deleteOldestImage() {
-        File directory = new File("images/");
-        File[] files = directory.listFiles();
-
-        if (files != null && files.length > 1) {
-            Arrays.sort(files, new Comparator<File>() {
-                public int compare(File f1, File f2) {
-                    return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
-                }
-            });
-
-            // El primer archivo en la lista ahora será el más antiguo
-            if (files[0].delete()) {
-                System.out.println("Imagen anterior eliminada correctamente: " + files[0].getName());
-            } else {
-                System.out.println("Error al eliminar la imagen anterior: " + files[0].getName());
-            }
-        }
-    }
 
     /**
      * Método principal de la aplicación.
